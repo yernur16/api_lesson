@@ -13,8 +13,8 @@ import (
 
 func Test_CreateUserHandler(t *testing.T) {
 	u := user.User{
-		Username: "test_yernur",
-		Password: "test_chief",
+		Id:   1,
+		Data: "test_chief",
 	}
 	bb, err := json.Marshal(u)
 	if err != nil {
@@ -49,7 +49,7 @@ func Test_GetUserHandler(t *testing.T) {
 		t.Error(err)
 	}
 
-	if u.Username != "yernur" && u.Username != "chef" && u.Username != "rahat" && u.Username != "oleg" && u.Username != "Asya" {
+	if u.Data != "yernur" {
 		t.Error(err)
 	}
 
@@ -57,7 +57,7 @@ func Test_GetUserHandler(t *testing.T) {
 
 func Test_Delete(t *testing.T) {
 	u := &user.User{
-		Id: 22,
+		Id: 1,
 	}
 	req, err := http.NewRequest("DELETE", (fmt.Sprintf("http://localhost:8080/user/%d", u.Id)), nil)
 	if err != nil {
@@ -84,4 +84,27 @@ func Test_Delete(t *testing.T) {
 	// 	t.Error("error on finding user")
 	// }
 
+}
+
+func Test_Update(t *testing.T) {
+	u := &user.User{
+		Id:   1,
+		Data: "test_mars",
+	}
+	bb, err := json.Marshal(u)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req, err := http.NewRequest("PUT", (fmt.Sprintf("http://localhost:8080/user/%d", u.Id)), bytes.NewBuffer(bb))
+	if err != nil {
+		t.Error(err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Error(err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Error("error on update")
+	}
 }

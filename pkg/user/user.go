@@ -1,41 +1,49 @@
 package user
 
 import (
-	"database/sql"
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
+	// _ "github.com/mattn/go-sqlite3"
+	"api/db"
 )
 
 type User struct {
-	Id       int
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Id   int
+	Data string `json:"data"`
 }
 
-func DB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "api.db")
-	if err != nil {
-		log.Fatal(err)
+func NewUser(id int, data string) *User {
+	return &User{
+		Id:   id,
+		Data: data,
 	}
-	// defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	crTable := "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT)"
-	_, err = db.Exec(crTable)
-	if err != nil {
-		log.Fatalf("Error on %s", err)
-	}
-	return db, nil
 }
 
-func (u *User) CreateUser(db *sql.DB) error {
-	query := `INSERT INTO users (username, password) VALUES ($1, $2)`
-	_, err := db.Exec(query, u.Username, u.Password)
+// func DB() (*sql.DB, error) {
+// 	db, err := sql.Open("sqlite3", "api.db")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// defer db.Close()
+
+// 	err = db.Ping()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	crTable := "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT)"
+// 	_, err = db.Exec(crTable)
+// 	if err != nil {
+// 		log.Fatalf("Error on %s", err)
+// 	}
+// 	return db, nil
+// }
+
+func (u *User) CreateUser(id int, data string) error {
+	_, err := db.DB.NamedExec("INSERT INTO users (id, data) VALUES (:id, :data)", map[string]interface{}{
+		"id":   u.Id,
+		"data": u.Data,
+	})
 	if err != nil {
 		log.Println(err)
 	}
@@ -44,9 +52,12 @@ func (u *User) CreateUser(db *sql.DB) error {
 
 }
 
-func (u *User) Read(db *sql.DB) error {
-	query := `SELECT username, password FROM users where id=$1`
-	err := db.QueryRow(query, u.Id).Scan(&u.Username, &u.Password)
+func (u *User) Read(id int, data string) error {
+	_, err := db.DB.NamedQuery("SELECT id, data FROM users where id=:id", map[string]interface{}{
+		"id":   u.Id,
+		"data": u.Data,
+	})
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,9 +65,23 @@ func (u *User) Read(db *sql.DB) error {
 	return nil
 }
 
-func (u *User) Delete(db *sql.DB) error {
-	query := `DELETE from users where id=$1`
-	_, err := db.Exec(query, u.Id)
+func (u *User) Delete(id int, data string) error {
+	_, err := db.DB.NamedExec("DELETE from users where id=:id", map[string]interface{}{
+		"id": u.Id,
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	return nil
+}
+
+func (u *User) Update(id int, data string) error {
+	_, err := db.DB.NamedExec("UPDATE users SET data =:data where id=:id", map[string]interface{}{
+		"id":   u.Id,
+		"data": u.Data,
+	})
+
 	if err != nil {
 		log.Fatal(err)
 	}

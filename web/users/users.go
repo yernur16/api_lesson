@@ -1,7 +1,6 @@
 package users
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -12,17 +11,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var Db *sql.DB
+// var Db *sql.DB
 
-func init() {
-	var err error
-	Db, err = user.DB()
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
+// func init() {
+// 	var err error
+// 	Db, err = user.DB()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 		return
+// 	}
 
-}
+// }
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
@@ -35,7 +34,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(us)
 
-	err = us.CreateUser(Db)
+	err = us.CreateUser(us.Id, us.Data)
 	if err != nil {
 		log.Println(err)
 		return
@@ -51,7 +50,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	us := &user.User{
 		Id: id,
 	}
-	err = us.Read(Db)
+	err = us.Read(us.Id, us.Data)
 	if err != nil {
 		log.Println(err)
 	}
@@ -70,7 +69,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	us := &user.User{
 		Id: id,
 	}
-	err = us.Delete(Db)
+	err = us.Delete(us.Id, us.Data)
 	if err != nil {
 		log.Println(err)
 	}
@@ -78,4 +77,23 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//add put
+func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		log.Println(err)
+	}
+	r.FormValue("id")
+
+	us := &user.User{
+		Id: id,
+	}
+
+	json.NewDecoder(r.Body).Decode(us)
+
+	err = us.Update(us.Id, us.Data)
+	if err != nil {
+		log.Println(err)
+	}
+	w.WriteHeader(http.StatusOK)
+
+}
