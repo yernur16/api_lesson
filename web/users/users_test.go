@@ -28,7 +28,6 @@ func Test_CreateUserHandler(t *testing.T) {
 	if resp.StatusCode != http.StatusCreated {
 		log.Fatal(err)
 	}
-
 }
 
 func Test_GetUserHandler(t *testing.T) {
@@ -49,10 +48,9 @@ func Test_GetUserHandler(t *testing.T) {
 		t.Error(err)
 	}
 
-	if u.Data != "yernur" {
+	if u.Data != "yernur" && u.Data != "yernar" && u.Data != "aidar" {
 		t.Error(err)
 	}
-
 }
 
 func Test_Delete(t *testing.T) {
@@ -83,7 +81,6 @@ func Test_Delete(t *testing.T) {
 	// if resp.StatusCode == http.StatusOK {
 	// 	t.Error("error on finding user")
 	// }
-
 }
 
 func Test_Update(t *testing.T) {

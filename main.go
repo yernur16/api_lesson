@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
 	router := mux.NewRouter()
 
 	router.HandleFunc("/user/{id}", users.CreateUserHandler).Methods(http.MethodPost)
