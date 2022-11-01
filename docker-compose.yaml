@@ -10,8 +10,11 @@ services:
     environment:
     - POSTGRES_PASSWORD=qwerty
     - POSTGRES_USER=postgres
-    volumes:
-     - local_pgdata:/var/lib/postgresql/data
+    # no permission in alem computers
+    # uncomment at home laptop
+    # volumes:
+    #  - ./local_pgdata:/var/lib/postgresql/data
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
@@ -21,9 +24,22 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: chef.povar@gmail.com
       PGADMIN_DEFAULT_PASSWORD: chef
-    volumes:
-    - pgadmin-data:/var/lib/pgadmin
+    # no permission in alem computers.
+    # uncomment at home laptop
+    # volumes:
+    # - ./pgadmin-data:/var/lib/pgadmin
+  api:
+    restart: on-failure
+    build: .
+    ports:
+     - "8080:8080"
 
-volumes: 
-  local_pgdata:
-  pgadmin-data:
+
+
+
+
+# no permission in alem computers
+# uncomment at home laptop
+# volumes: 
+#   local_pgdata:
+#   pgadmin-data:

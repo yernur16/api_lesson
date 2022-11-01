@@ -1,27 +1,14 @@
 package users
 
 import (
+	"api/pkg/user"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 
-	"api/pkg/user"
-
 	"github.com/gorilla/mux"
 )
-
-// var Db *sql.DB
-
-// func init() {
-// 	var err error
-// 	Db, err = user.DB()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 		return
-// 	}
-
-// }
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
@@ -58,7 +45,6 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(us)
 
 	w.WriteHeader(http.StatusOK)
-
 }
 
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +60,6 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	w.WriteHeader(http.StatusNoContent)
-
 }
 
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -95,5 +80,4 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	w.WriteHeader(http.StatusOK)
-
 }

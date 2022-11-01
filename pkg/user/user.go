@@ -1,10 +1,8 @@
 package user
 
 import (
-	"log"
-
-	// _ "github.com/mattn/go-sqlite3"
 	"api/db"
+	"log"
 )
 
 type User struct {
@@ -18,26 +16,6 @@ func NewUser(id int, data string) *User {
 		Data: data,
 	}
 }
-
-// func DB() (*sql.DB, error) {
-// 	db, err := sql.Open("sqlite3", "api.db")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	// defer db.Close()
-
-// 	err = db.Ping()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	crTable := "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT)"
-// 	_, err = db.Exec(crTable)
-// 	if err != nil {
-// 		log.Fatalf("Error on %s", err)
-// 	}
-// 	return db, nil
-// }
 
 func (u *User) CreateUser(id int, data string) error {
 	_, err := db.DB.NamedExec("INSERT INTO users (id, data) VALUES (:id, :data)", map[string]interface{}{
