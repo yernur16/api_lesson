@@ -55,10 +55,10 @@ func (u *User) Delete() error {
 	return nil
 }
 
-// func (u *User) Update() error {
-// 	_, err := db.DB.NamedExec("UPDATE users SET data =:data where id=:id", map[string]interface{}{})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return nil
-// }
+func (u *User) Update() error {
+	_, err := db.DB.NamedExec("UPDATE users SET data =:data where id=:id", map[string]interface{}{"id": u.Id, "data": u.Data})
+	if err != nil {
+		log.Fatal(err)
+	}
+	return nil
+}
