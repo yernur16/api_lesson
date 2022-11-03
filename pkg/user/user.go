@@ -45,15 +45,15 @@ func (u *User) Read() (string, error) {
 	return data, nil
 }
 
-// func (u *User) Delete() error {
-// 	_, err := db.DB.NamedExec("DELETE from users where id=:id", map[string]interface{}{
-// 		"id": u.Id,
-// 	})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return nil
-// }
+func (u *User) Delete() error {
+	_, err := db.DB.NamedExec("DELETE from users where id=:id", map[string]interface{}{
+		"id": u.Id,
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	return nil
+}
 
 // func (u *User) Update() error {
 // 	_, err := db.DB.NamedExec("UPDATE users SET data =:data where id=:id", map[string]interface{}{})

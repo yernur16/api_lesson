@@ -60,20 +60,20 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-// 	id, err := strconv.Atoi(mux.Vars(r)["id"])
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	us := &user.User{
-// 		Id: id,
-// 	}
-// 	err = us.Delete(us.Id, us.Data)
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	w.WriteHeader(http.StatusNoContent)
-// }
+func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		log.Println(err)
+	}
+	us := &user.User{
+		Id: id,
+	}
+	err = us.Delete()
+	if err != nil {
+		log.Println(err)
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
 
 // func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 // 	id, err := strconv.Atoi(mux.Vars(r)["id"])
