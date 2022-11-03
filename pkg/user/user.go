@@ -18,14 +18,14 @@ type Data struct {
 }
 
 func (u *User) CreateUser() error {
-	byte, err := json.Marshal(u.Data)
+	bytes, err := json.Marshal(u.Data)
 	if err != nil {
 		log.Println(err)
 	}
-	// other version
-	// temp := []string{u.First_name, u.Last_name, u.Interests}
-	// data := strings.Join(temp, " ")
-	_, err = db.DB.NamedExec("INSERT INTO users (data) VALUES (:data)", map[string]interface{}{"data": byte})
+
+	_, err = db.DB.NamedExec("INSERT INTO users (data) VALUES (:data)", map[string]interface{}{
+		"data": bytes,
+	})
 	if err != nil {
 		log.Println(err)
 	}
@@ -35,7 +35,9 @@ func (u *User) CreateUser() error {
 
 func (u *User) Read() (string, error) {
 	var data string
-	err := db.DB.Select(&data, "SELECT data FROM users where id=$1;", u.Id)
+	var err error
+	row := db.DB.QueryRow("SELECT data FROM users where id=$1", u.Id)
+	row.Scan(&data)
 	if err != nil {
 		log.Println(err)
 	}

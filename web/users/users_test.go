@@ -51,8 +51,8 @@ func Test_GetUserHandler(t *testing.T) {
 		t.Error(err)
 	}
 
-	mock :=
-	if u.Data != "yernur" && u.Data != "yernar" && u.Data != "aidar" {
+	mock := `{"first_name": "yernur", "last_name": "abishev", "interests": "coding,golang,ubuntu"}`
+	if u.Data != mock {
 		t.Error(err)
 	}
 }

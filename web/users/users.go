@@ -3,6 +3,7 @@ package users
 import (
 	"api/pkg/user"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,7 +20,17 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	json.NewDecoder(r.Body).Decode(us)
+	bb, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+	}
+	err = json.Unmarshal(bb, us)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// Alternative version
+	// json.NewDecoder(r.Body).Decode(us)
 
 	err = us.CreateUser()
 	if err != nil {
@@ -41,10 +52,10 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(data)
+
 	w.Header().Add("Content-type", "application/json")
 
-	json.NewEncoder(w).Encode(us)
+	w.Write([]byte(data))
 
 	w.WriteHeader(http.StatusOK)
 }
