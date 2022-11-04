@@ -4,6 +4,7 @@ import (
 	"api/pkg/user"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,8 +14,11 @@ import (
 
 func Test_CreateUserHandler(t *testing.T) {
 	u := user.User{
-		Id:   1,
-		Data: "test_chief",
+		Data: user.Data{
+			First_name: "eren",
+			Last_name:  "yeager",
+			Interests:  "kill,freedom,rumbling",
+		},
 	}
 	bb, err := json.Marshal(u)
 	if err != nil {
@@ -31,8 +35,19 @@ func Test_CreateUserHandler(t *testing.T) {
 }
 
 func Test_GetUserHandler(t *testing.T) {
+	// version with independence from user.Data structure
+	// mock := struct {
+	// 	First_name string `json:"first_name"`
+	// 	Last_name  string `json:"last_name"`
+	// 	Interests  string `json:"interests"`
+	// }{
+	// 	"Beka",
+	// 	"Teka",
+	// 	"1234",
+	// }
+
 	u := &user.User{
-		Id: 1,
+		Id: 9,
 	}
 	resp, err := http.Get(fmt.Sprintf("http://localhost:8080/user/%d", u.Id))
 	if err != nil {
@@ -43,19 +58,26 @@ func Test_GetUserHandler(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = json.Unmarshal(bb, u)
+	err = json.Unmarshal(bb, &u.Data)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if u.Data != "yernur" && u.Data != "yernar" && u.Data != "aidar" {
-		t.Error(err)
+	test := user.Data{First_name: "wolf", Last_name: "cat", Interests: "starwars,startrek"}
+
+	// alternative test
+	// if mock.First_name != u.Data.First_name {
+	// 	t.Fatal("123423")
+	// }
+
+	if u.Data != test {
+		t.Error(errors.New("error with Test_GetUserHandler"))
 	}
 }
 
 func Test_Delete(t *testing.T) {
 	u := &user.User{
-		Id: 1,
+		Id: 10,
 	}
 	req, err := http.NewRequest("DELETE", (fmt.Sprintf("http://localhost:8080/user/%d", u.Id)), nil)
 	if err != nil {
@@ -68,25 +90,16 @@ func Test_Delete(t *testing.T) {
 	if resp.StatusCode != http.StatusNoContent {
 		t.Error("error on delete")
 	}
-
-	// bb, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	t.Error(err)
-	// }
-	// err = json.Unmarshal(bb, u)
-	// if err != nil {
-	// 	t.Error(err)
-	// }
-
-	// if resp.StatusCode == http.StatusOK {
-	// 	t.Error("error on finding user")
-	// }
 }
 
 func Test_Update(t *testing.T) {
 	u := &user.User{
-		Id:   1,
-		Data: "test_mars",
+		Id: 1,
+		Data: user.Data{
+			First_name: "test_yernur",
+			Last_name:  "test_abishev",
+			Interests:  "test_cooking,test_coding,test_manga_reader",
+		},
 	}
 	bb, err := json.Marshal(u)
 	if err != nil {

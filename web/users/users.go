@@ -3,6 +3,7 @@ package users
 import (
 	"api/pkg/user"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,9 +20,19 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	json.NewDecoder(r.Body).Decode(us)
+	bb, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+	}
+	err = json.Unmarshal(bb, us)
+	if err != nil {
+		log.Println(err)
+	}
 
-	err = us.CreateUser(us.Id, us.Data)
+	// Alternative version
+	// json.NewDecoder(r.Body).Decode(us)
+
+	err = us.CreateUser()
 	if err != nil {
 		log.Println(err)
 		return
@@ -37,12 +48,14 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	us := &user.User{
 		Id: id,
 	}
-	err = us.Read(us.Id, us.Data)
+	data, err := us.Read()
 	if err != nil {
 		log.Println(err)
 	}
+
 	w.Header().Add("Content-type", "application/json")
-	json.NewEncoder(w).Encode(us)
+
+	w.Write([]byte(data))
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -55,7 +68,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	us := &user.User{
 		Id: id,
 	}
-	err = us.Delete(us.Id, us.Data)
+	err = us.Delete()
 	if err != nil {
 		log.Println(err)
 	}
@@ -67,15 +80,21 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	r.FormValue("id")
 
 	us := &user.User{
 		Id: id,
+		Data: user.Data{
+			First_name: r.FormValue("first_name"),
+			Last_name:  r.FormValue("last_name"),
+			Interests:  r.FormValue("interests"),
+		},
 	}
 
-	json.NewDecoder(r.Body).Decode(us)
+	if err := json.NewDecoder(r.Body).Decode(us); err != nil {
+		log.Println(err)
+	}
 
-	err = us.Update(us.Id, us.Data)
+	err = us.Update()
 	if err != nil {
 		log.Println(err)
 	}

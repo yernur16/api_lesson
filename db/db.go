@@ -12,7 +12,7 @@ const (
 	port     = "5432"
 	user     = "postgres"
 	password = "qwerty"
-	host     = "postgres"
+	host     = "localhost"
 	dbname   = "postgres"
 	sslmode  = "disable"
 )
@@ -26,7 +26,7 @@ func init() {
 		log.Fatalf(err.Error())
 	}
 
-	crTable := "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, data VARCHAR)"
+	crTable := "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY NOT NULL, data VARCHAR)"
 	_, err = db.Exec(crTable)
 	if err != nil {
 		log.Fatalf("Error on %s", err)
