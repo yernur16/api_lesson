@@ -80,14 +80,19 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	r.FormValue("id")
-	r.FormValue("data")
 
 	us := &user.User{
 		Id: id,
+		Data: user.Data{
+			First_name: r.FormValue("first_name"),
+			Last_name:  r.FormValue("last_name"),
+			Interests:  r.FormValue("interests"),
+		},
 	}
 
-	json.NewDecoder(r.Body).Decode(us)
+	if err := json.NewDecoder(r.Body).Decode(us); err != nil {
+		log.Println(err)
+	}
 
 	err = us.Update()
 	if err != nil {

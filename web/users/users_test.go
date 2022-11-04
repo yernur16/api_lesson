@@ -94,8 +94,12 @@ func Test_Delete(t *testing.T) {
 
 func Test_Update(t *testing.T) {
 	u := &user.User{
-		Id:   1,
-		Data: "test_mars",
+		Id: 1,
+		Data: user.Data{
+			First_name: "test_yernur",
+			Last_name:  "test_abishev",
+			Interests:  "test_cooking,test_coding,test_manga_reader",
+		},
 	}
 	bb, err := json.Marshal(u)
 	if err != nil {

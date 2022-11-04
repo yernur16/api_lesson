@@ -56,7 +56,14 @@ func (u *User) Delete() error {
 }
 
 func (u *User) Update() error {
-	_, err := db.DB.NamedExec("UPDATE users SET data =:data where id=:id", map[string]interface{}{"id": u.Id, "data": u.Data})
+	bytes, err := json.Marshal(u.Data)
+	if err != nil {
+		log.Println(err)
+	}
+	_, err = db.DB.NamedExec("UPDATE users SET data =:data where id=:id", map[string]interface{}{
+		"id":   u.Id,
+		"data": bytes,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
