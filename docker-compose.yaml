@@ -1,12 +1,6 @@
 version: '3.8'
 
 services:
-  api:
-    restart: on-failure
-    build: .
-    ports:
-     - "8080:8080"
-  
   postgres:
     image: postgres:13-alpine
     container_name: postgres
@@ -14,16 +8,19 @@ services:
     ports: 
     - "5432:5432"
     environment:
-    - POSTGRES_PASSWORD=qwerty
     - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=qwerty
+    
+  
 
-    configs:
-      - postgres
-      - postgres
-      - postgres # change on localhost/postgres when working out of container/in container
-      - "5432"
-      - qwerty
-      - disable
+
+  api:
+    restart: on-failure
+    build: .
+    ports:
+    - "8080:8080"
+
+    
     # no permission in alem computers
     # uncomment at home laptop
     # volumes:

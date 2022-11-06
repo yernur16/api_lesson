@@ -16,14 +16,15 @@ func init() {
 		log.Fatalf("error with initializing configs: %s", err.Error())
 	}
 
-	conn := fmt.Sprintf("user=%s dbname=%s host=%s port=%s password=%s sslmode=%s",
-		viper.Get("services.postgres.configs.0"),
-		viper.Get("services.postgres.configs.1"),
-		viper.Get("services.postgres.configs.2"),
-		viper.Get("services.postgres.configs.3"),
-		viper.Get("services.postgres.configs.4"),
-		viper.Get("services.postgres.configs.5"))
+	conn := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
+		viper.Get("user"),
+		viper.Get("password"),
+		viper.Get("host"),
+		viper.Get("port"),
+		viper.Get("dbname"),
+		viper.Get("sslmode"))
 
+	log.Printf("conn is %v\n", conn)
 	db, err := sqlx.Connect("postgres", conn)
 	if err != nil {
 		log.Fatalf(err.Error())
@@ -38,8 +39,7 @@ func init() {
 }
 
 func initConfig() error {
-	viper.AddConfigPath(".")
-	viper.SetConfigName("docker-compose")
-	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./config")
+	viper.SetConfigName("development")
 	return viper.ReadInConfig()
 }
