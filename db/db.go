@@ -6,6 +6,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/pressly/goose/v3"
 	"github.com/spf13/viper"
 )
 
@@ -30,12 +31,19 @@ func init() {
 		log.Fatalf(err.Error())
 	}
 
-	crTable := "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY NOT NULL, data VARCHAR)"
-	_, err = db.Exec(crTable)
+	log.Printf("Start migrating database\n")
+	err = goose.Up(db.DB, ".")
 	if err != nil {
-		log.Fatalf("Error on %s", err)
+		log.Println("error with goose up migration")
 	}
-	DB = db
+
+	// crTable := "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY NOT NULL, data VARCHAR)"
+	// _, err = db.Exec(crTable)
+	// if err != nil {
+	// 	log.Fatalf("Error on %s", err)
+	// }
+
+	// DB = db
 }
 
 func initConfig() error {
