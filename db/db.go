@@ -6,30 +6,48 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-)
-
-const (
-	port     = "5432"
-	user     = "postgres"
-	password = "qwerty"
-	host     = "localhost"
-	dbname   = "postgres"
-	sslmode  = "disable"
+	"github.com/pressly/goose/v3"
+	"github.com/spf13/viper"
 )
 
 var DB *sqlx.DB
 
 func init() {
-	conn := fmt.Sprintf("user=%s dbname=%s host=%s port=%s password=%s sslmode=%s", user, dbname, host, port, password, sslmode)
+	if err := initConfig(); err != nil {
+		log.Fatalf("error with initializing configs: %s", err.Error())
+	}
+
+	conn := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
+		viper.Get("user"),
+		viper.Get("password"),
+		viper.Get("host"),
+		viper.Get("port"),
+		viper.Get("dbname"),
+		viper.Get("sslmode"))
+
+	log.Printf("conn is %v\n", conn)
 	db, err := sqlx.Connect("postgres", conn)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 
-	crTable := "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY NOT NULL, data VARCHAR)"
-	_, err = db.Exec(crTable)
+	log.Printf("Start migrating database\n")
+	err = goose.Up(db.DB, ".")
 	if err != nil {
-		log.Fatalf("Error on %s", err)
+		log.Println("error with goose up migration")
 	}
-	DB = db
+
+	// crTable := "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY NOT NULL, data VARCHAR)"
+	// _, err = db.Exec(crTable)
+	// if err != nil {
+	// 	log.Fatalf("Error on %s", err)
+	// }
+
+	// DB = db
+}
+
+func initConfig() error {
+	viper.AddConfigPath("./config")
+	viper.SetConfigName("development")
+	return viper.ReadInConfig()
 }

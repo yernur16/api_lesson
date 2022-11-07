@@ -1,0 +1,6 @@
+user: postgres
+dbname: postgres
+host: postgres
+port: "5432"
+password: "qwerty"
+sslmode: disable

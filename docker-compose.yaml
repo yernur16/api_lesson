@@ -8,33 +8,25 @@ services:
     ports: 
     - "5432:5432"
     environment:
-    - POSTGRES_PASSWORD=qwerty
     - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=qwerty
+    
+  
+
+
+  api:
+    restart: on-failure
+    build: .
+    ports:
+    - "8080:8080"
+
+    
     # no permission in alem computers
     # uncomment at home laptop
     # volumes:
     #  - ./local_pgdata:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
-    ports:
-    - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: chef.povar@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: chef
-    # no permission in alem computers.
-    # uncomment at home laptop
-    # volumes:
-    # - ./pgadmin-data:/var/lib/pgadmin
-  api:
-    restart: on-failure
-    build: .
-    ports:
-     - "8080:8080"
-
-
+    # configs for viper configuration to db.go
 
 
 
@@ -42,4 +34,3 @@ services:
 # uncomment at home laptop
 # volumes: 
 #   local_pgdata:
-#   pgadmin-data:
